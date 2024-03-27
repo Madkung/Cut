@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>URL Cleaner</title>
+</head>
+<body>
+  <label for="url">ใส่ลิงก์ URL:</label><br>
+  <input type="text" id="url" name="url"><br>
+  <button onclick="cleanURL()">ลบส่วนที่ไม่ต้องการ</button>
+
+  <div id="result"></div> <!-- ส่วนที่ใช้แสดงผลลัพธ์ -->
+
+  <button onclick="copyResult()">คัดลอกผลลัพธ์</button> <!-- ปุ่มคัดลอก -->
+
+  <script>
+    async function cleanURL() {
+      const url = document.getElementById("url").value;
+      const response = await fetch('/webhook', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          url: url
+        }),
+      });
+      const result = await response.text();
+      document.getElementById("result").innerText = result; // แสดงผลลัพธ์
+    }
+
+    function copyResult() {
+      const resultText = document.getElementById("result").innerText;
+
+      // สร้าง element textarea เพื่อให้ง่ายต่อการคัดลอกข้อมูล
+      const textarea = document.createElement("textarea");
+      textarea.value = resultText;
+      document.body.appendChild(textarea);
+      
+      // คัดลอกข้อมูล
+      textarea.select();
+      document.execCommand("copy");
+      
+      // ลบ element textarea ทิ้ง
+      document.body.removeChild(textarea);
+      
+      alert("คัดลอกผลลัพธ์แล้ว: " + resultText);
+    }
+  </script>
+</body>
+</html>
